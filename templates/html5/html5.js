@@ -125,45 +125,46 @@ $(function(){
     var selector = 'body.ajax a:not([class~="noajax"])',
         progress = 'ajax-in-progress';
 
-    $(document).on('click', selector, function(event) {
+    $(document)
+		.on('click', selector, function(event) {
 
-        var $this = $(this),
-            url = $this.attr('href') || null,
-            liveClickHandlers = $(document).data('events').click,
-            hrefNotJS = function(uri) {  return url.substring(0,11) != 'javascript:'; },
-            thisHandlers;
-
-        $this.addClass(progress);
-
-        thisHandlers = $.map(liveClickHandlers, function(h) {
-            if (h.selector == selector) return null;
-            if ( $(h.selector).filter('.' + progress).length > 0 ) return h.selector;
-            return null;
-        });
-
-        $this.removeClass(progress);
-
-        if (thisHandlers.length === 0 && !!url && hrefNotJS(url)) {
-            window.History.pushState(null, null, url);
-            return false;
-        }
-
-    });
+			var $this = $(this),
+				url = $this.attr('href') || null,
+				liveClickHandlers = $(document).data('events').click,
+				hrefNotJS = function(uri) {  return url.substring(0,11) != 'javascript:'; },
+				thisHandlers;
+	
+			$this.addClass(progress);
+	
+			thisHandlers = $.map(liveClickHandlers, function(h) {
+				if (h.selector == selector) return null;
+				if ( $(h.selector).filter('.' + progress).length > 0 ) return h.selector;
+				return null;
+			});
+	
+			$this.removeClass(progress);
+	
+			if (thisHandlers.length === 0 && !!url && hrefNotJS(url)) {
+				window.History.pushState(null, null, url);
+				return false;
+			}
+	
+		})
+		
+		.on('click','a[skybox]', function() {
+			var $this = $(this),
+				url = $this.attr('href'),
+				w = $this.attr('skybox-width'),
+				h = $this.attr('skybox-height');
+			$.skybox(url, w, h);
+			return false;
+		})
+	; // $(document)
 
     //skybox
     $(window).resize(function() {
         $skybox.center();
         $overlay.width($(document).width()).height($(document).height());
-    });
-
-
-    $('a[skybox]').on('click', function() {
-        var $this = $(this),
-            url = $this.attr('href'),
-            w = $this.attr('skybox-width'),
-            h = $this.attr('skybox-height');
-        $.skybox(url, w, h);
-        return false;
     });
 
     // close skybox on ESC key up
